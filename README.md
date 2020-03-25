@@ -2,8 +2,8 @@
 Uma aplicação de carrinho de compras, proposto em forma de desafio pela Tegra.
 
 # Tecnologias usadas
-1. Back-End = Node.js
-1. Front-End = Bootstrap 4
+1. Back-End = Node.js junto do framework Express
+1. Front-End = EJS para o render de páginas e Bootstrap 4 para estilização
 1. Banco de dados = MongoDB
 
 # Requisitos da Aplicação
