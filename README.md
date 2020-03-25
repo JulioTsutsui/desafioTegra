@@ -32,10 +32,11 @@ Entre na raiz do projeto e execute o seguinte comando:
 npm install // esse comando irá instalar todos os módulos necessários para o projeto
 ```
 
-Antes de iniciar o projeto, você precisará inserir um link de conexão a um banco de dados MongoDB. O arquivo se chama **configs.json** e estará na pasta raiz do projeto, igual ao código abaixo:
+Antes de iniciar o projeto, você precisará inserir um link de conexão a um banco de dados MongoDB,assim como o nome do banco que passará a ser utilizado. O arquivo se chama **configs.json** e estará na pasta raiz do projeto, igual ao código abaixo:
 ```json
 {
-   "connection":"[INSERIR LINK DE CONEXÃO AO BANCO MONGODB]"
+   "connection":"[INSERIR LINK DE CONEXÃO AO BANCO MONGODB]",
+   "dbname":"[INSERIR NOME DO BANCO A SER UTILIZADO]"
 }
 ```
 
