@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<%-	include("templates/head") -%>
+	<title>TegraBooks</title>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="fixed-top col-md-2 bg-dark vh-100 p-0">
+				<div class="container-fluid bg-danger" id="logo">
+					<h1 class="text-white">Tegra<br />Books</h1>
+				</div>
+				<div class="container-fluid text-center mt-4">
+					<a class="btn btn-outline-primary" href="/">Home</a>
+				</div>
+				<div class="container-fluid text-center mt-4">
+					<a class="btn btn-outline-success" href="/dashboard">Dashboard</a>
+				</div>
+				<div class="container-fluid text-center mt-4">
+					<a class="btn btn-outline-danger" href="/carrinho">Carrinho <i class="fas fa-shopping-cart"></i></a>
+				</div>
+			</div>
+			<div class="offset-2 col-md-10">
+				<h1 class="display-4">Tela Inicial</h1>
+				<hr>
+				<div class="container">
+					<% for(livro of livros) {%>
+						<div>
+							<a href="#" class="text-primary"><%= livro.title %> </a>
+							<p class="sub"><%= livro.author %> </p>
+							<p class="text-danger">R$<%= livro.price %> </p>
+							<p>Estoque: <%= livro.stock %> </p>
+							<button onclick="addLivro('<%= livro._id %>')" class="btn btn-danger">Adicionar ao Carrinho</button>
+						</div>
+						<hr>
+					<% } %>  
+				</div>
+			</div>
+		</div>
+	</div>
+	<%- include("templates/scripts") -%>
+	<script>
+		function addLivro(id) {
+			$.ajax({
+				url:"/carrinho",
+				method:"post",
+				data:{id:id},
+				success: function (res) {
+					Swal.fire({
+						icon:"success",
+						text:"Livro adicionado ao carrinho"
+					})
+				}
+			});
+		}
+	</script>
+</body>
+
+</html>

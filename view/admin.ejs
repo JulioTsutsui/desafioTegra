@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<%-	include("templates/head") -%> 
+	<title>Dashboard</title>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="fixed-top col-md-2 bg-dark vh-100 p-0">
+				<div class="container-fluid bg-danger" id="logo">
+					<h1 class="text-white">Tegra<br />Books</h1>
+				</div>
+				<div class="container-fluid text-center mt-4">
+					<a class="btn btn-outline-primary" href="/">Home</a>
+				</div>
+				<div class="container-fluid text-center mt-4">
+					<a class="btn btn-outline-success" href="/dashboard">Dashboard</a>
+				</div>
+				<div class="container-fluid text-center mt-4">
+					<a class="btn btn-outline-danger" href="/carrinho">Carrinho <i class="fas fa-shopping-cart"></i></a>
+				</div>
+			</div>
+			<div class="offset-2 col-md-10">
+				
+				<h1 class="display-4">Tela Inicial</h1>
+				<% if(validacao === "A") {%>
+					<div class="alert alert-success">
+						Livro Inserido!
+					</div>
+				<% } %>
+				<% if(validacao === "B") {%>
+				<div class="alert alert-success">
+					Ocorreu um erro ao inserir
+				</div>
+				<% } %>
+				<% if(validacao === "C") {%>
+				<div class="alert alert-success">
+					Livro Alterado!
+				</div>
+				<% } %>
+				<% if(validacao === "D") {%>
+				<div class="alert alert-success">
+					Ocorreu um erro ao alterar
+				</div>
+				<% } %>
+				<% if(validacao === "E") {%>
+				<div class="alert alert-success">
+					Livro Deletado!
+				</div>
+				<% } %>
+				<% if(validacao === "F") {%>
+				<div class="alert alert-success">
+					Ocorreu um erro ao deletar
+				</div>
+				<% } %>
+				<hr>
+				<div id="conteudo">
+					<button onclick="abrirModalInserir()" class="btn btn-success float-right">Inserir Livro <i class="fas fa-plus"></i></button>
+					<br>
+					<br>
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th scope="col">ID</th>
+								<th scope="col">Título</th>
+								<th scope="col">Autor</th>
+								<th scope="col">Preço</th>
+								<th scope="col">Estoque</th>
+								<th scope="col">Opções</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(livro of livros) { %>
+									<tr>
+										<th scope="row"><%= livro._id %></th>
+										<td><%= livro.title %> </td>
+										<td><%= livro.author %> </td>
+										<td><%= livro.price %> </td>
+										<td><%= livro.stock %> </td>
+										<td>
+											<button onclick="abrirModalEditar('<%= livro._id %>')" class="btn btn-primary"><i class="fas fa-edit"></i></button>
+											&nbsp;
+											<button onclick="deletarLivro('<%= livro._id %>')" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+										</td>
+									</tr>		
+							<%}%>
+						</tbody>
+					</table>
+
+					<%- include("templates/modal") -%> 
+			</div>
+		</div>
+	</div>
+	
+	<%- include("templates/scripts") -%>
+	<script>
+		function abrirModalInserir() {
+			$("#modalInsert").modal("show");
+		}
+		function inserirLivro() {
+			let url = "/dashboard/livro/inserir"
+			let data={
+				title: $("#title2").val(),
+				author: $("#author2").val().split(","),
+				price: parseFloat($("#price2").val()),
+				stock: parseInt($("#stock2").val())
+			}
+
+			$.ajax({
+				url: url,
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(data),
+				dataType: "JSON",
+				success: function(response) {
+					location.href = `/dashboard?type=${response.type}`
+				}
+			});
+		}
+		function abrirModalEditar(id){
+			let data;
+			let url = `/dashboard/livro/${id}`
+			$.ajax({
+				url: url,
+				type: 'get',
+				contentType: 'application/json',
+				success: function(response) {
+					$("#title").val(response.title);
+					$("#author").val(response.author);
+					$("#price").val(response.price);
+					$("#stock").val(response.stock);
+				}
+			});
+			$("#edit").data("id", id);
+			$('#editModal').modal('show');
+		}
+		function editarLivro() {
+				let id = $("#edit").data("id");
+				let url=`/dashboard/livro/atualizar/${id}`;
+
+				let data = {
+					title: $("#title").val(),
+					author: $("#author").val().split(","),
+					price: parseFloat($("#price").val()),
+					stock: parseInt($("#stock").val())
+				}
+
+				$.ajax({
+					url: url,
+					type: 'PUT',
+					contentType: 'application/json',
+					data: JSON.stringify(data),
+					dataType: "JSON",
+					success: function(response) {
+						location.href=`/dashboard?type=${response.type}`
+					}
+				});
+			}
+			function deletarLivro(id) {
+				let url=`/dashboard/livro/deletar/${id}`;
+				$.ajax({
+					url: url,
+					type: 'DELETE',
+					contentType: 'application/json',
+					success: function(response) {
+						location.href=`/dashboard?type=${response.type}`
+					}
+				});
+			}
+	</script>
+</body>
+
+</html>

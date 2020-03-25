@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<%-	include("templates/head") -%>
+	<title>Checkout</title>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="fixed-top col-md-2 bg-dark vh-100 p-0">
+				<div class="container-fluid bg-danger" id="logo">
+					<h1 class="text-white">Tegra<br />Books</h1>
+				</div>
+				<div class="container-fluid text-center mt-4">
+					<a class="btn btn-outline-primary" href="/">Home</a>
+				</div>
+				<div class="container-fluid text-center mt-4">
+					<a class="btn btn-outline-success" href="/dashboard">Dashboard</a>
+				</div>
+				<div class="container-fluid text-center mt-4">
+					<a class="btn btn-outline-danger" href="/carrinho">Carrinho <i class="fas fa-shopping-cart"></i></a>
+				</div>
+			</div>
+			<div class="offset-2 col-sm-10 col-md-10">
+				<h1 class="display-4">Carrinho</h1>
+				<hr>
+				<div class="container">
+					<% if(carrinho.livros.length > 0) {%> 
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th scope="col">Título</th>
+								<th scope="col">Autor</th>
+								<th scope="col">Preço</th>
+								<th scope="col">Quantidade</th>
+								<th scope="col">Subtotal</th>
+								<th scope="col"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(livro of carrinho.livros) { %>
+								<tr>
+									<td><%= livro.title %> </td>
+									<td><%= livro.author %> </td>
+									<td><%= (livro.price).toFixed(2) %> </td>
+									<td><input data-id="<%= livro._id %>" class="form-control quantidade" type="number" min="1" max="<%= livro.stock%>" value="<%= livro.quantidade %>"><br>Estoque: <%= livro.stock %> </td>
+									<td>R$ <span class="subtotal"><%= (livro.subtotal).toFixed(2)  %></span></td>
+									<td><button onclick="removeItem('<%= livro._id %>')" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button></td>
+								</tr>
+							<%}%>
+						</tbody>
+					</table>
+					<h2>Total: R$ <span class="total-compra"><%= carrinho.total  %></span></h2>
+					<% } else { %>
+						<h1>Você não adicionou nenhum item ao carrinho :(</h1>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<%- include("templates/scripts") -%> 
+	
+	<script>
+		$(".quantidade").on("change",function(){
+			let $row = $(this).closest("tr");
+			let $id = $(this).data("id");	
+			let $qtd = parseInt($(this).val());
+			
+			$.ajax({
+				url:"/carrinho",
+				method:"post",
+				data: {id:$id,quantidade:$qtd},
+				success: function (response) {
+					
+					$(this).val(response.livro.quantidade);
+					$row.find(".subtotal").text(response.livro.subtotal.toFixed(2));
+					$(".total-compra").text(response.total);
+				}
+			});
+		});
+		function removeItem(id) {
+			$.ajax({
+				url:"/carrinho",
+				method:"delete",
+				data:{id:id},
+				success: function () {
+					location.reload();
+				}
+			});
+		}
+	</script>
+</body>
+
+</html>
